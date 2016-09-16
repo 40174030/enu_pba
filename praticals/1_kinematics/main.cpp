@@ -57,10 +57,10 @@ void UpdateIK() {
   UpdateHierarchy();
   const float distance = length(vec3(links[links.size() - 1].m_end[3]) - target);
   if (distance < 0.5f) {
-    MoveTarget();
+	  MoveTarget();
   }
-  // ik_1dof_Update(target, links, linkLength);
   ik_3dof_Update(target, links, linkLength);
+  //ik_1dof_Update(target, links, linkLength);
 }
 
 void RenderIK() {

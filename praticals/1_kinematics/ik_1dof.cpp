@@ -32,26 +32,28 @@ static void Reach(int i, const vec3 &target, std::vector<Link> &const links) {
   // Get Dot of the two vectors
   float cosAngle = dot(vLinkBaseToTargetDirection, vLinkBaseToEndEffDirection);
   if (abs(cosAngle) < 1.0f) {
-    // *********************************
     // Get the Angle between the two vectors
-
+	  float angleBetween = acos(cosAngle);
 
     // Turn into a Quat with our axis
+	  dquat q = normalize(angleAxis(angleBetween, vLinkAxis));
+	  //dquat q = rotate(quat(), angleBetween, vLinkAxis);
 
-    // Multply our current Quat with it
+    // Multiply our current Quat with it
+	  dquat newQuat = q * qCur;
+	  newQuat = normalize(newQuat);
 
     // Pull out the angle component, set the link params
-
-    // *********************************
+	  links[i].m_angle = angle(newQuat);
   }
 }
 
 void ik_1dof_Update(const vec3 &const target, std::vector<Link> &const links, const float linkLength) {
   numLinks = links.size();
-  // for (size_t i = links.size(); i >= 1; --i) {
-  for (size_t i = 0; i < links.size() - 1; ++i) {
+  for (size_t i = links.size(); i >= 1; --i) {
+  //for (size_t i = 0; i < links.size() - 1; ++i) {
     UpdateHierarchy();
-    Reach(i, target, links);
+    Reach(i - 1, target, links);
     const float distance = length(vec3(links[links.size() - 1].m_end[3]) - target);
     if (distance < 0.5f) {
       return;
