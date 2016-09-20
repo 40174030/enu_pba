@@ -14,13 +14,16 @@ using namespace glm;
 // Simulation constants
 int numLinks = 5;
 float linkLength = 2.0f; // Length of each link
-std::vector<Link> links;
+vector<Link> links;
+vector<Link> contactLinks;
+//array<vector<Link>,2> contactLinks;
+bool madeContact = false;
 vec3 target = vec3(6.0f, 4.0f, 0);
 
 void MoveTarget() {
   target = glm::ballRand((static_cast<float>(numLinks) * linkLength) * 0.6f);
   target.y = abs(target.y);
-  // target.x = abs(target.x);
+  target.x = abs(target.x);
   cout << "boop" << endl;
 }
 
@@ -47,31 +50,39 @@ bool load_content() {
     int ay = (i + 1) % 3 == 0;
     int az = (i + 2) % 3 == 0;
     links.push_back(Link(vec3(ax, ay, az), 0.0 + (float)i * 0.0f));
+//	contactLinks[0].push_back(Link(vec3(ax, ay, az), 0.0 + (float)i * 0.0f));
+//	contactLinks[1].push_back(Link(vec3(ax, ay, az), 0.0 + (float)i * 0.0f));
     cout << vec3(ax, ay, az) << endl;
   }
+  contactLinks = links;
   UpdateHierarchy();
   return true;
 }
 
 void UpdateIK() {
+  madeContact = false;
   UpdateHierarchy();
   const float distance = length(vec3(links[links.size() - 1].m_end[3]) - target);
   if (distance < 0.5f) {
+	  madeContact = true;
+	  contactLinks = links;
 	  MoveTarget();
   }
-  ik_3dof_Update(target, links, linkLength);
-  //ik_1dof_Update(target, links, linkLength);
+  if (!madeContact) {
+	  ik_3dof_Update(target, links, linkLength);
+	  //ik_1dof_Update(target, links, linkLength);
+  }
 }
 
 void RenderIK() {
   phys::DrawSphere(target, 0.2f, RED);
-  for (int i = 0; i < (int)links.size(); ++i) {
-    vec3 base = links[i].m_base[3];
-    vec3 end = links[i].m_end[3];
-    phys::DrawCube(links[i].m_base * glm::scale(mat4(1.0f), vec3(0.5f)), GREEN);
-    phys::DrawCube(links[i].m_end * glm::scale(mat4(1.0f), vec3(0.5f)), ORANGE);
+  for (int i = 0; i < (int)contactLinks.size(); ++i) {
+    vec3 base = contactLinks[i].m_base[3];
+    vec3 end = contactLinks[i].m_end[3];
+    phys::DrawCube(contactLinks[i].m_base * glm::scale(mat4(1.0f), vec3(0.5f)), GREEN);
+    phys::DrawCube(contactLinks[i].m_end * glm::scale(mat4(1.0f), vec3(0.5f)), ORANGE);
     phys::DrawLine(base, end);
-    phys::DrawPlane(base, links[i].m_worldaxis, vec3(0.01f));
+    phys::DrawPlane(base, contactLinks[i].m_worldaxis, vec3(0.01f));
   }
 }
 
