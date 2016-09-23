@@ -51,7 +51,7 @@ bool update(double delta_time) {
       ball.velocity.y = 0;
       done = true;
       cout << "Ball Took: " << chrono::duration_cast<chrono::duration<double>>(tp_end - tp_start).count()
-           << " seconds, " << frames << " frames(ticks)" << endl;
+           << " seconds, " << frames << " frames (ticks)" << endl;
     }
   }
   phys::Update(delta_time);
