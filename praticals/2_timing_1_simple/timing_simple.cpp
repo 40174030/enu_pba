@@ -21,7 +21,7 @@ chrono::time_point<chrono::high_resolution_clock> tp_end;
 
 //use this function simulate render workload
 void doWork() {
-  this_thread::sleep_for(std::chrono::milliseconds(rand()%50));
+//  this_thread::sleep_for(std::chrono::milliseconds(rand()%50));
 }
 
 bool update(double delta_time) {
@@ -39,11 +39,11 @@ bool update(double delta_time) {
     frames++;
     // *********************************
     // Apply Acceleration to Velocity
-	double time = chrono::duration_cast<chrono::duration<double>>(chrono::high_resolution_clock::now() - tp_start).count();
-	ball.velocity = gravity * time;
+	ball.velocity += gravity * delta_time;
     // Apply Velocity to position
-	dvec3 distance = ball.velocity * time;
-	ball.position += distance;
+//	double time = chrono::duration_cast<chrono::duration<double>>(chrono::high_resolution_clock::now() - tp_start).count();
+//	dvec3 distance = ball.velocity * time;
+	ball.position += ball.velocity * delta_time;
     // *********************************
 
     if (ball.position.y <= 0.0f) {
