@@ -41,8 +41,6 @@ bool update(double delta_time) {
     // Apply Acceleration to Velocity
 	ball.velocity += gravity * delta_time;
     // Apply Velocity to position
-//	double time = chrono::duration_cast<chrono::duration<double>>(chrono::high_resolution_clock::now() - tp_start).count();
-//	dvec3 distance = ball.velocity * time;
 	ball.position += ball.velocity * delta_time;
     // *********************************
 
