@@ -29,23 +29,22 @@ bool update(double delta_time) {
   }
 
   phys::Update(delta_time);
+  phys::SetCameraPos(SceneList[0]->GetPosition() + vec3(20.0f, 10.0f, 20.0f));
+  phys::SetCameraTarget(SceneList[0]->GetPosition());
   return true;
 }
 
 bool load_content() {
   phys::Init();
-  // Ball Factory
-  for (size_t i = 0; i < 10; i++) {
-    unique_ptr<Entity> ent(new Entity());
-    ent->SetPosition(vec3((i * 2) - 15.0, 10 + i, 0));
-    unique_ptr<Component> physComponent(new cPhysics());
-    unique_ptr<Component> renderComponent(new cShapeRenderer());
-    ent->AddComponent(unique_ptr<Component>(new cPhysics()));
-    ent->AddComponent(unique_ptr<Component>(new cShapeRenderer()));
-    SceneList.push_back(move(ent));
-  }
-  phys::SetCameraPos(vec3(20.0f, 10.0f, 20.0f));
-  phys::SetCameraTarget(vec3(0, 10.0f, 0));
+
+  unique_ptr<Entity> ent(new Entity());
+  ent->SetPosition(vec3(-20.0, 2.0, 0));
+  unique_ptr<Component> physComponent(new cPhysics());
+  unique_ptr<Component> renderComponent(new cShapeRenderer());
+  ent->AddComponent(unique_ptr<Component>(new cPhysics()));
+  ent->AddComponent(unique_ptr<Component>(new cShapeRenderer()));
+  SceneList.push_back(move(ent));
+  
   InitPhysics();
   return true;
 }
