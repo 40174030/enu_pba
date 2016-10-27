@@ -8,14 +8,20 @@ using namespace glm;
 
 namespace phys {
 target_camera cam;
+free_camera cam2;
 effect effP;
 effect effB;
 effect effG;
 glm::mat4 PV;
 directional_light light;
 material mat;
+double cursor_x = 0.0;
+double cursor_y = 0.0;
+bool free_cam_enabled = false;
 
 void Init() {
+  glfwSetInputMode(renderer::get_window(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+  glfwGetCursorPos(renderer::get_window(), &cursor_x, &cursor_y);
 
   effB = effect();
   effB.add_shader("shaders/phys_basic.vert", GL_VERTEX_SHADER);
@@ -29,10 +35,16 @@ void Init() {
   effG.add_shader("shaders/phys_grid.vert", GL_VERTEX_SHADER);
   effG.add_shader("shaders/phys_grid.frag", GL_FRAGMENT_SHADER);
   effG.build();
+
   cam.set_position(vec3(10.0f, 10.0f, 10.0f));
   cam.set_target(vec3(0.0f, 0.0f, 0.0f));
+
+  cam2.set_position(vec3(10.0f, 10.0f, 10.0f));
+  cam2.set_pitch(0.0f);
+
   auto aspect = static_cast<float>(renderer::get_screen_width()) / static_cast<float>(renderer::get_screen_height());
   cam.set_projection(quarter_pi<float>(), aspect, 2.414f, 1000.0f);
+  cam2.set_projection(quarter_pi<float>(), aspect, 2.414f, 1000.0f);
 
   light.set_ambient_intensity(vec4(0.5f, 0.5f, 0.5f, 1.0f));
   light.set_light_colour(vec4(1.0f, 1.0f, 1.0f, 1.0f));
@@ -41,9 +53,44 @@ void Init() {
 }
 
 void Update(double delta_time) {
-  PV = cam.get_projection() * cam.get_view();
-  cam.update(static_cast<float>(delta_time));
-  renderer::setClearColour(0, 0, 0);
+	double current_x;
+	double current_y;
+	double move_speed = 20.0;
+
+	static double ratio_width = quarter_pi<float>() / static_cast<float>(renderer::get_screen_width());
+	static double ratio_height =
+		(quarter_pi<float>() * (static_cast<float>(renderer::get_screen_height()) /
+			static_cast<float>(renderer::get_screen_width()))) / static_cast<float>(renderer::get_screen_height());
+
+	glfwGetCursorPos(renderer::get_window(), &current_x, &current_y);
+
+	double delta_x = current_x - cursor_x;
+	double delta_y = cursor_y - current_y;
+
+	delta_x *= ratio_width;
+	delta_y *= ratio_height;
+
+	if (free_cam_enabled) {
+		cam2.rotate(delta_x, delta_y);
+		if (glfwGetKey(renderer::get_window(), GLFW_KEY_1))
+			free_cam_enabled = false;
+
+		if (glfwGetKey(renderer::get_window(), GLFW_KEY_W))
+			cam2.move(dvec3(0.0f, 0.0f, 1.0f) * delta_time * move_speed);
+
+		cam2.update(delta_time);
+		PV = cam2.get_projection() * cam2.get_view();
+	}
+	else {
+		if (glfwGetKey(renderer::get_window(), GLFW_KEY_2))
+			free_cam_enabled = true;
+		cam.update(delta_time);
+		PV = cam.get_projection() * cam.get_view();
+	}
+
+	renderer::setClearColour(0, 0, 0);
+
+	glfwGetCursorPos(renderer::get_window(), &cursor_x, &cursor_y);
 }
 
 const glm::vec3 UP(0, 1.0f, 0);
@@ -182,14 +229,23 @@ void DrawPlane(const glm::vec3 &p0, const glm::vec3 &norm, const glm::vec3 &scal
   glEnable(GL_CULL_FACE);
 }
 
-void SetCameraPos(const glm::vec3 &p0) {
-  cam.set_position(p0);
-  PV = cam.get_projection() * cam.get_view();
+void SetCamera1Pos(const glm::vec3 &p0) {
+	cam.set_position(p0);
+	PV = cam.get_projection() * cam.get_view();
 }
 
-void SetCameraTarget(const glm::vec3 &p0) {
-  cam.set_target(p0);
-  PV = cam.get_projection() * cam.get_view();
+void SetCamera1Target(const glm::vec3 &p0) {
+	cam.set_target(p0);
+	PV = cam.get_projection() * cam.get_view();
+}
+
+void SetCamera2Pos(const glm::vec3 &p0) {
+	cam2.set_position(p0);
+	PV = cam2.get_projection() * cam2.get_view();
+}
+
+glm::mat4 GetPV() {
+	return PV;
 }
 
 void RGBAInt32::tofloat(float *const arr) const {

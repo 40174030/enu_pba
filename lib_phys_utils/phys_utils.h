@@ -35,8 +35,10 @@ const RGBAInt32 RandomColour();
 void DrawScene();
 void Init();
 void Update(double delta_time);
-void SetCameraPos(const glm::vec3 &p0);
-void SetCameraTarget(const glm::vec3 &p0);
+void SetCamera1Pos(const glm::vec3 &p0);
+void SetCamera1Target(const glm::vec3 &p0);
+void SetCamera2Pos(const glm::vec3 &p0);
+glm::mat4 GetPV();
 void DrawLine(const glm::vec3 &p0, const glm::vec3 &p1, const bool depth = true, const RGBAInt32 col = RED);
 void DrawLineCross(const glm::vec3 &p0, float radius = 1.0f, const bool depth = true, const RGBAInt32 col = RED);
 

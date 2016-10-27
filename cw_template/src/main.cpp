@@ -7,31 +7,57 @@ using namespace std;
 using namespace graphics_framework;
 using namespace glm;
 
-map<string, mesh> meshes;
+mesh playfield;
+effect basic_eff;
 
-bool load_content() {
+bool load_content() 
+{
 	phys::Init();
 
-	const double playfield_width = 20.0;
-	const double playfield_length = 42.0;
+	const unsigned int playfield_width = 20;
+	const unsigned int playfield_length = 42;
 
-	geometry playfield_geom;
-	playfield_geom.set_type(GL_QUADS);
+	const float playfield_x = (float)playfield_width / 2.0f;
+	const float playfield_z = (float)playfield_length / 2.0f;
+
+/*	geometry playfield_geom;
 	vector<vec3> playfield_positions
 	{
-		vec3(0.0, 0.0, 5.0),
-		vec3(playfield_width, 0.0, 5.0),
-		vec3(playfield_width, playfield_length, 5.0),
-		vec3(0.0, playfield_length, 5.0)
+		vec3(playfield_x, 5.0f, -playfield_z),
+		vec3(-playfield_x, 5.0f, -playfield_z),
+		vec3(playfield_x, 5.0f, playfield_z),
+
+		vec3(-playfield_x, 5.0f, playfield_z),
+		vec3(playfield_x, 5.0f, playfield_z),
+		vec3(-playfield_x, 5.0f, -playfield_z)
+	};
+	vector<vec4> playfield_colours
+	{
+		vec4(1.0f, 0.0f, 0.0f, 1.0f),
+		vec4(1.0f, 0.0f, 0.0f, 1.0f),
+		vec4(1.0f, 0.0f, 0.0f, 1.0f),
+		vec4(1.0f, 0.0f, 0.0f, 1.0f),
+		vec4(1.0f, 0.0f, 0.0f, 1.0f),
+		vec4(1.0f, 0.0f, 0.0f, 1.0f)
 	};
 	playfield_geom.add_buffer(playfield_positions, BUFFER_INDEXES::POSITION_BUFFER);
-	meshes["playfield"] = mesh(playfield_geom);
+	playfield_geom.add_buffer(playfield_colours, BUFFER_INDEXES::COLOUR_BUFFER);
+	playfield = mesh(playfield_geom);
+*/
+	playfield = mesh(geometry_builder::create_plane(playfield_width, playfield_length));
+	playfield.get_transform().translate(vec3(0.0f, 5.0f, 0.0f));
+	
+	basic_eff.add_shader("shaders/basic.vert", GL_VERTEX_SHADER);
+	basic_eff.add_shader("shaders/basic.frag", GL_FRAGMENT_SHADER);
+	basic_eff.build();
 
 	return true;
 }
 
-bool update(float delta_time) {
-	phys::SetCameraPos(vec3(0.0f, 40.0f, 0.1f));
+bool update(double delta_time) {
+	phys::SetCamera1Pos(vec3(0.0f, 60.0f, 0.1f));
+	phys::SetCamera1Target(vec3(0.0f, 0.0f, 0.0f));
+	phys::SetCamera2Pos(vec3(0.0f, 8.0f, 30.0f));
 	phys::Update(delta_time);
 	return true;
 }
@@ -53,12 +79,20 @@ bool render() {
 */
 	phys::DrawScene();
 
-	for (auto &e : meshes)
-	{
-		auto m = e.second;
+	auto M = playfield.get_transform().get_transform_matrix();
+	auto PV = phys::GetPV();
+	auto MVP = PV * M;
 
+	renderer::bind(basic_eff);
 
-	}
+	glUniformMatrix4fv(
+		basic_eff.get_uniform_location("MVP"),
+		1,
+		GL_FALSE,
+		value_ptr(MVP)
+	);
+
+	renderer::render(playfield);
 
 	return true;
 }
