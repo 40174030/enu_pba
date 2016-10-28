@@ -13,6 +13,9 @@ effect basic_eff;
 bool load_content() 
 {
 	phys::Init();
+	phys::SetCamera1Pos(vec3(0.0f, 55.0f, 0.1f));
+	phys::SetCamera1Target(vec3(0.0f, 0.0f, 0.0f));
+	phys::SetCamera2Pos(vec3(0.0f, 8.0f, 30.0f));
 
 	const unsigned int playfield_width = 20;
 	const unsigned int playfield_length = 42;
@@ -45,7 +48,7 @@ bool load_content()
 	playfield = mesh(playfield_geom);
 */
 	playfield = mesh(geometry_builder::create_plane(playfield_width, playfield_length));
-	playfield.get_transform().translate(vec3(0.0f, 5.0f, 0.0f));
+	playfield.get_transform().translate(vec3(0.0f, 2.0f, 0.0f));
 	
 	basic_eff.add_shader("shaders/basic.vert", GL_VERTEX_SHADER);
 	basic_eff.add_shader("shaders/basic.frag", GL_FRAGMENT_SHADER);
@@ -55,9 +58,6 @@ bool load_content()
 }
 
 bool update(double delta_time) {
-	phys::SetCamera1Pos(vec3(0.0f, 60.0f, 0.1f));
-	phys::SetCamera1Target(vec3(0.0f, 0.0f, 0.0f));
-	phys::SetCamera2Pos(vec3(0.0f, 8.0f, 30.0f));
 	phys::Update(delta_time);
 	return true;
 }

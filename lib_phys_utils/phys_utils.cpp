@@ -77,7 +77,20 @@ void Update(double delta_time) {
 
 		if (glfwGetKey(renderer::get_window(), GLFW_KEY_W))
 			cam2.move(dvec3(0.0f, 0.0f, 1.0f) * delta_time * move_speed);
-
+		if (glfwGetKey(renderer::get_window(), GLFW_KEY_A))
+			cam2.move(dvec3(-1.0f, 0.0f, 0.0f) * delta_time * move_speed);
+		if (glfwGetKey(renderer::get_window(), GLFW_KEY_S))
+			cam2.move(dvec3(0.0f, 0.0f, -1.0f) * delta_time * move_speed);
+		if (glfwGetKey(renderer::get_window(), GLFW_KEY_D))
+			cam2.move(dvec3(1.0f, 0.0f, 0.0f) * delta_time * move_speed);
+		if (glfwGetKey(renderer::get_window(), GLFW_KEY_R))
+			cam2.move(dvec3(0.0f, 1.0f, 0.0f) * delta_time * move_speed);
+		if (glfwGetKey(renderer::get_window(), GLFW_KEY_F))
+			cam2.move(dvec3(0.0f, -1.0f, 0.0f) * delta_time * move_speed);
+		if (glfwGetKey(renderer::get_window(), GLFW_KEY_C))
+		{
+			phys::SetCamera2Pos(vec3(0.0f, 8.0f, 30.0f));
+		}
 		cam2.update(delta_time);
 		PV = cam2.get_projection() * cam2.get_view();
 	}
@@ -241,6 +254,8 @@ void SetCamera1Target(const glm::vec3 &p0) {
 
 void SetCamera2Pos(const glm::vec3 &p0) {
 	cam2.set_position(p0);
+	cam2.set_pitch(0.0f);
+	cam2.set_yaw(0.0f);
 	PV = cam2.get_projection() * cam2.get_view();
 }
 
