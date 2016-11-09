@@ -2,6 +2,7 @@
 #include <glm/gtx/rotate_vector.hpp>
 #include <graphics_framework.h>
 #include <phys_utils.h>
+#include "scene_graph.h"
 
 using namespace std;
 using namespace graphics_framework;
@@ -17,39 +18,6 @@ bool load_content()
 	phys::SetCamera1Target(vec3(0.0f, 0.0f, 0.0f));
 	phys::SetCamera2Pos(vec3(0.0f, 8.0f, 30.0f));
 
-	const unsigned int playfield_width = 20;
-	const unsigned int playfield_length = 42;
-
-	const float playfield_x = (float)playfield_width / 2.0f;
-	const float playfield_z = (float)playfield_length / 2.0f;
-
-/*	geometry playfield_geom;
-	vector<vec3> playfield_positions
-	{
-		vec3(playfield_x, 5.0f, -playfield_z),
-		vec3(-playfield_x, 5.0f, -playfield_z),
-		vec3(playfield_x, 5.0f, playfield_z),
-
-		vec3(-playfield_x, 5.0f, playfield_z),
-		vec3(playfield_x, 5.0f, playfield_z),
-		vec3(-playfield_x, 5.0f, -playfield_z)
-	};
-	vector<vec4> playfield_colours
-	{
-		vec4(1.0f, 0.0f, 0.0f, 1.0f),
-		vec4(1.0f, 0.0f, 0.0f, 1.0f),
-		vec4(1.0f, 0.0f, 0.0f, 1.0f),
-		vec4(1.0f, 0.0f, 0.0f, 1.0f),
-		vec4(1.0f, 0.0f, 0.0f, 1.0f),
-		vec4(1.0f, 0.0f, 0.0f, 1.0f)
-	};
-	playfield_geom.add_buffer(playfield_positions, BUFFER_INDEXES::POSITION_BUFFER);
-	playfield_geom.add_buffer(playfield_colours, BUFFER_INDEXES::COLOUR_BUFFER);
-	playfield = mesh(playfield_geom);
-*/
-	playfield = mesh(geometry_builder::create_plane(playfield_width, playfield_length));
-	playfield.get_transform().translate(vec3(0.0f, 2.0f, 0.0f));
-	
 	basic_eff.add_shader("shaders/basic.vert", GL_VERTEX_SHADER);
 	basic_eff.add_shader("shaders/basic.frag", GL_FRAGMENT_SHADER);
 	basic_eff.build();
@@ -79,20 +47,40 @@ bool render() {
 */
 	phys::DrawScene();
 
-	auto M = playfield.get_transform().get_transform_matrix();
-	auto PV = phys::GetPV();
-	auto MVP = PV * M;
+	const unsigned int playfield_width = 20;
+	const unsigned int playfield_length = 42;
 
-	renderer::bind(basic_eff);
+	const float playfield_x = (float)playfield_width / 2.0f;
+	const float playfield_z = (float)playfield_length / 2.0f;
 
-	glUniformMatrix4fv(
-		basic_eff.get_uniform_location("MVP"),
-		1,
-		GL_FALSE,
-		value_ptr(MVP)
-	);
+	vector<vec3> playfield_positions
+	{
+		vec3(playfield_x, 5.0f, -playfield_z),
+		vec3(-playfield_x, 5.0f, -playfield_z),
+		vec3(playfield_x, 5.0f, playfield_z),
 
-	renderer::render(playfield);
+		vec3(-playfield_x, 5.0f, playfield_z),
+		vec3(playfield_x, 5.0f, playfield_z),
+		vec3(-playfield_x, 5.0f, -playfield_z)
+	};
+	vector<vec4> playfield_colours
+	{
+		vec4(1.0f, 0.0f, 0.0f, 1.0f),
+		vec4(1.0f, 0.0f, 0.0f, 1.0f),
+		vec4(1.0f, 0.0f, 0.0f, 1.0f),
+		vec4(1.0f, 0.0f, 0.0f, 1.0f),
+		vec4(1.0f, 0.0f, 0.0f, 1.0f),
+		vec4(1.0f, 0.0f, 0.0f, 1.0f)
+	};
+	const float playfield_angle = 0.122173f;
+
+	GeometryNode* playfield = new GeometryNode(playfield_positions, playfield_colours, basic_eff);
+	TransformNode* rotate_playfield = new TransformNode( vec3(0.0f, 0.0f, 0.0f),
+														 vec3(1.0f, 1.0f, 1.0f),
+														 vec3(playfield_angle, 0.0f, 0.0f),
+														 basic_eff);
+	playfield->addChild(rotate_playfield);
+	playfield->update();
 
 	return true;
 }
