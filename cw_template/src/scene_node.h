@@ -13,7 +13,7 @@ class SceneNode
 protected:
 	list<SceneNode*> children;
 	SceneNode* parent;
-	mesh object;
+	mat4 currentTransform;
 
 public:
 	SceneNode() { parent = nullptr; }
@@ -38,36 +38,24 @@ public:
 		children.clear();
 	}
 
-	void setParent(SceneNode* newParent)
-	{
-		this->parent = newParent;
-	}
-
 	void addChild(SceneNode* newNode)
 	{
 		newNode->setParent(this);
 		children.push_back(newNode);
 	}
 
-	mesh getNodeObject() { return object; }
-
-	void renderNode(mesh object, effect eff)
+	void setCurrentTransform(mat4 cT)
 	{
-
-
-		auto M = object.get_transform().get_transform_matrix();
-		auto PV = phys::GetPV();
-		auto MVP = PV * M;
-
-		renderer::bind(eff);
-
-		glUniformMatrix4fv(
-			eff.get_uniform_location("MVP"),
-			1,
-			GL_FALSE,
-			value_ptr(MVP)
-		);
-
-		renderer::render(object);
+		currentTransform = cT;
 	}
+
+	void setParent(SceneNode* newParent)
+	{
+		this->parent = newParent;
+	}
+
+	mat4 getCurrentTransform() { return currentTransform; }
+
+	list<SceneNode*> getChildren() { return children; }
+
 };

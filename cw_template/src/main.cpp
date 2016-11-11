@@ -8,7 +8,7 @@ using namespace std;
 using namespace graphics_framework;
 using namespace glm;
 
-mesh playfield;
+map<string, mesh> meshes;
 effect basic_eff;
 
 bool load_content() 
@@ -47,23 +47,15 @@ bool render() {
 */
 	phys::DrawScene();
 
+	const float off_the_ground = 5.0f;
+
 	const unsigned int playfield_width = 20;
 	const unsigned int playfield_length = 42;
-
 	const float playfield_x = (float)playfield_width / 2.0f;
 	const float playfield_z = (float)playfield_length / 2.0f;
+	const float wall_height = 3.0f;
 
-	vector<vec3> playfield_positions
-	{
-		vec3(playfield_x, 5.0f, -playfield_z),
-		vec3(-playfield_x, 5.0f, -playfield_z),
-		vec3(playfield_x, 5.0f, playfield_z),
-
-		vec3(-playfield_x, 5.0f, playfield_z),
-		vec3(playfield_x, 5.0f, playfield_z),
-		vec3(-playfield_x, 5.0f, -playfield_z)
-	};
-	vector<vec4> playfield_colours
+	vector<vec4> temp_colours
 	{
 		vec4(1.0f, 0.0f, 0.0f, 1.0f),
 		vec4(1.0f, 0.0f, 0.0f, 1.0f),
@@ -72,16 +64,61 @@ bool render() {
 		vec4(1.0f, 0.0f, 0.0f, 1.0f),
 		vec4(1.0f, 0.0f, 0.0f, 1.0f)
 	};
+
+	vector<vec3> playfield_positions
+	{
+		vec3(playfield_x, off_the_ground, -playfield_z),
+		vec3(-playfield_x, off_the_ground, -playfield_z),
+		vec3(playfield_x, off_the_ground, playfield_z),
+
+		vec3(-playfield_x, off_the_ground, playfield_z),
+		vec3(playfield_x, off_the_ground, playfield_z),
+		vec3(-playfield_x, off_the_ground, -playfield_z)
+	};
 	const float playfield_angle = 0.122173f;
 
-	GeometryNode* playfield = new GeometryNode(playfield_positions, playfield_colours, basic_eff);
-	TransformNode* rotate_playfield = new TransformNode( vec3(0.0f, 0.0f, 0.0f),
+	vector<vec3> outer_wall_positions
+	{
+		vec3(-playfield_x, off_the_ground + wall_height, -playfield_z),
+		vec3(playfield_x, off_the_ground, -playfield_z),
+		vec3(-playfield_x, off_the_ground, -playfield_z),
+
+		vec3(playfield_x, off_the_ground + wall_height, -playfield_z),
+		vec3(playfield_x, off_the_ground, -playfield_z),
+		vec3(-playfield_x, off_the_ground + wall_height, -playfield_z)
+	};
+
+
+	GeometryNode* playfield = new GeometryNode(playfield_positions, temp_colours);
+/*	TransformNode* rotate_playfield = new TransformNode( vec3(0.0f, 0.0f, 0.0f),
 														 vec3(1.0f, 1.0f, 1.0f),
 														 vec3(playfield_angle, 0.0f, 0.0f),
 														 basic_eff);
-	playfield->addChild(rotate_playfield);
-	playfield->update();
+*/	GeometryNode* outer_walls = new GeometryNode(outer_wall_positions, temp_colours);
+//	TransformNode* stay_outer_walls = new TransformNode(basic_eff);
 
+/*	playfield->addChild(rotate_playfield);
+		rotate_playfield->addChild(outer_walls);
+			outer_walls->addChild(stay_outer_walls);
+	playfield->update();
+*/
+
+
+/*	auto M = 
+	auto PV = phys::GetPV();
+	auto MVP = PV * M;
+	
+	renderer::bind(basic_eff);
+	
+	glUniformMatrix4fv(
+		basic_eff.get_uniform_location("MVP"),
+		1,
+		GL_FALSE,
+		value_ptr(MVP)
+	);
+
+	renderer::render(object);
+*/
 	return true;
 }
 

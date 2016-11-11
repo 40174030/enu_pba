@@ -4,16 +4,15 @@
 class GeometryNode : public SceneNode
 {
 private:
+	mesh object;
 	vector<vec3> positions;
 	vector<vec4> colours;
-	effect eff;
 
 public:
-	GeometryNode(vector<vec3> p, vector<vec4> c, effect e) 
+	GeometryNode(vector<vec3> p, vector<vec4> c) 
 	{
 		positions = p;
 		colours = c;
-		eff = e;
 	}
 	~GeometryNode() {}
 	void update();

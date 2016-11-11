@@ -2,12 +2,14 @@
 
 void TransformNode::update()
 {
-	object = this->parent->getNodeObject();
-	object.get_transform().translate(translation);
-	object.get_transform().scale *= scale;
-	object.get_transform().rotate(rotation);
+	mesh objectCopy;
 
-	renderNode(object, eff);
+	objectCopy.get_transform().translate(translation);
+	objectCopy.get_transform().scale *= scale;
+	objectCopy.get_transform().rotate(rotation);
+
+	currentTransform = objectCopy.get_transform().get_transform_matrix();
+	this->parent->setCurrentTransform(currentTransform);
 
 	SceneNode::update();
 }
