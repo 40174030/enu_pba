@@ -13,7 +13,8 @@ class SceneNode
 protected:
 	list<SceneNode*> children;
 	SceneNode* parent;
-	mat4 currentTransform;
+	mesh object;
+	mat4 nodeTransform;
 
 public:
 	SceneNode() { parent = nullptr; }
@@ -40,22 +41,21 @@ public:
 
 	void addChild(SceneNode* newNode)
 	{
-		newNode->setParent(this);
+		newNode->setNodeParent(this);
 		children.push_back(newNode);
 	}
 
-	void setCurrentTransform(mat4 cT)
-	{
-		currentTransform = cT;
-	}
-
-	void setParent(SceneNode* newParent)
+	void setNodeParent(SceneNode* newParent)
 	{
 		this->parent = newParent;
 	}
 
-	mat4 getCurrentTransform() { return currentTransform; }
+	void setNodeTransform(mat4 newTransform)
+	{
+		this->nodeTransform = newTransform;
+	}
 
-	list<SceneNode*> getChildren() { return children; }
-
+	list<SceneNode*> getNodeChildren() { return children; }
+	mesh getNodeObject() { return object; }
+	mat4 getNodeTransform() { return nodeTransform; }
 };

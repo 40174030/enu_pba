@@ -1,3 +1,5 @@
+#define GLM_ENABLE_EXPERIMENTAL
+
 #include <glm/glm.hpp>
 #include <glm/gtx/rotate_vector.hpp>
 #include <graphics_framework.h>
@@ -53,17 +55,7 @@ bool render() {
 	const unsigned int playfield_length = 42;
 	const float playfield_x = (float)playfield_width / 2.0f;
 	const float playfield_z = (float)playfield_length / 2.0f;
-	const float wall_height = 3.0f;
-
-	vector<vec4> temp_colours
-	{
-		vec4(1.0f, 0.0f, 0.0f, 1.0f),
-		vec4(1.0f, 0.0f, 0.0f, 1.0f),
-		vec4(1.0f, 0.0f, 0.0f, 1.0f),
-		vec4(1.0f, 0.0f, 0.0f, 1.0f),
-		vec4(1.0f, 0.0f, 0.0f, 1.0f),
-		vec4(1.0f, 0.0f, 0.0f, 1.0f)
-	};
+	const float wall_height = 2.0f;
 
 	vector<vec3> playfield_positions
 	{
@@ -85,40 +77,56 @@ bool render() {
 
 		vec3(playfield_x, off_the_ground + wall_height, -playfield_z),
 		vec3(playfield_x, off_the_ground, -playfield_z),
-		vec3(-playfield_x, off_the_ground + wall_height, -playfield_z)
+		vec3(-playfield_x, off_the_ground + wall_height, -playfield_z),
+
+		vec3(-playfield_x, off_the_ground, playfield_z),
+		vec3(playfield_x, off_the_ground, playfield_z),
+		vec3(-playfield_x, off_the_ground + wall_height, playfield_z),
+
+		vec3(playfield_x, off_the_ground + wall_height, playfield_z),
+		vec3(-playfield_x, off_the_ground + wall_height, playfield_z),
+		vec3(playfield_x, off_the_ground, playfield_z)
 	};
 
+	vector<vec4> playfield_colours
+	{
+		vec4(1.0f, 0.0f, 0.0f, 1.0f),
+		vec4(1.0f, 0.0f, 0.0f, 1.0f),
+		vec4(1.0f, 0.0f, 0.0f, 1.0f),
+		vec4(1.0f, 0.0f, 0.0f, 1.0f),
+		vec4(1.0f, 0.0f, 0.0f, 1.0f),
+		vec4(1.0f, 0.0f, 0.0f, 1.0f)
+	};
 
-	GeometryNode* playfield = new GeometryNode(playfield_positions, temp_colours);
-/*	TransformNode* rotate_playfield = new TransformNode( vec3(0.0f, 0.0f, 0.0f),
-														 vec3(1.0f, 1.0f, 1.0f),
-														 vec3(playfield_angle, 0.0f, 0.0f),
-														 basic_eff);
-*/	GeometryNode* outer_walls = new GeometryNode(outer_wall_positions, temp_colours);
-//	TransformNode* stay_outer_walls = new TransformNode(basic_eff);
+	vector<vec4> outer_wall_colours
+	{
+		vec4(1.0f, 0.0f, 0.0f, 1.0f),
+		vec4(1.0f, 0.0f, 0.0f, 1.0f),
+		vec4(1.0f, 0.0f, 0.0f, 1.0f),
+		vec4(1.0f, 0.0f, 0.0f, 1.0f),
+		vec4(1.0f, 0.0f, 0.0f, 1.0f),
+		vec4(1.0f, 0.0f, 0.0f, 1.0f),
+		vec4(1.0f, 0.0f, 0.0f, 1.0f),
+		vec4(1.0f, 0.0f, 0.0f, 1.0f),
+		vec4(1.0f, 0.0f, 0.0f, 1.0f),
+		vec4(1.0f, 0.0f, 0.0f, 1.0f),
+		vec4(1.0f, 0.0f, 0.0f, 1.0f),
+		vec4(1.0f, 0.0f, 0.0f, 1.0f)
+	};
 
-/*	playfield->addChild(rotate_playfield);
-		rotate_playfield->addChild(outer_walls);
-			outer_walls->addChild(stay_outer_walls);
+	GeometryNode* playfield = new GeometryNode(playfield_positions, playfield_colours);
+	RenderNode* transform_playfield = new RenderNode( vec3(0.0f, 0.0f, 0.0f),
+												   vec3(1.0f, 1.0f, 1.0f),
+												   vec3(playfield_angle, 0.0f, 0.0f),
+												   basic_eff);
+	GeometryNode* outer_walls = new GeometryNode(outer_wall_positions, outer_wall_colours);
+	RenderNode* transform_outer_walls = new RenderNode(basic_eff);
+
+	playfield->addChild(transform_playfield);
+		transform_playfield->addChild(outer_walls);
+			outer_walls->addChild(transform_outer_walls);
 	playfield->update();
-*/
 
-
-/*	auto M = 
-	auto PV = phys::GetPV();
-	auto MVP = PV * M;
-	
-	renderer::bind(basic_eff);
-	
-	glUniformMatrix4fv(
-		basic_eff.get_uniform_location("MVP"),
-		1,
-		GL_FALSE,
-		value_ptr(MVP)
-	);
-
-	renderer::render(object);
-*/
 	return true;
 }
 

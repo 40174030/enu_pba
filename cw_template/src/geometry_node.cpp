@@ -1,22 +1,23 @@
+#define GLM_ENABLE_EXPERIMENTAL
+
 #include "geometry_node.h"
 
 void GeometryNode::update()
 {
-	geometry object_geom;
-
-	object_geom.add_buffer(positions, BUFFER_INDEXES::POSITION_BUFFER);
-	object_geom.add_buffer(colours, BUFFER_INDEXES::COLOUR_BUFFER);
-	object = mesh(object_geom);
-
-	if (parent != nullptr)
+	if (this->parent != nullptr)
 	{
-		currentTransform = parent->getCurrentTransform();
+		setNodeTransform(this->parent->getNodeTransform());
 	}
 	else
 	{
-		currentTransform = mat4(1.0f);
+		setNodeTransform(mat4(1.0f));
 	}
-	
+
+	geometry objectGeom;
+	objectGeom.add_buffer(positions, BUFFER_INDEXES::POSITION_BUFFER);
+	objectGeom.add_buffer(colours, BUFFER_INDEXES::COLOUR_BUFFER);
+	object = mesh(objectGeom);
+
 	SceneNode::update();
 }
 

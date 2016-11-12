@@ -4,7 +4,6 @@
 class GeometryNode : public SceneNode
 {
 private:
-	mesh object;
 	vector<vec3> positions;
 	vector<vec4> colours;
 
