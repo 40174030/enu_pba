@@ -18,7 +18,6 @@ public:
 		rotation = vec3(0.0f);
 		eff = e;
 	}
-	
 	RenderNode(vec3 t, vec3 s, vec3 r, effect e)
 	{
 		translation = t;		
@@ -26,8 +25,6 @@ public:
 		rotation = r;
 		eff = e;
 	}
-
 	~RenderNode() {}
-
 	void update();
 };

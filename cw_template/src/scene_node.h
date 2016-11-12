@@ -22,14 +22,6 @@ public:
 
 	void release() { delete this; }
 
-	virtual void update()
-	{
-		for (list<SceneNode*>::iterator i = children.begin(); i != children.end(); i++)
-		{
-			(*i)->update();
-		}
-	}
-
 	void destroy()
 	{
 		for (list<SceneNode*>::iterator i = children.begin(); i != children.end(); i++)
@@ -37,6 +29,14 @@ public:
 			(*i)->release();
 		}
 		children.clear();
+	}
+
+	virtual void update()
+	{
+		for (list<SceneNode*>::iterator i = children.begin(); i != children.end(); i++)
+		{
+			(*i)->update();
+		}
 	}
 
 	void addChild(SceneNode* newNode)

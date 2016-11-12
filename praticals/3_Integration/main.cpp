@@ -1,3 +1,5 @@
+#define GLM_ENABLE_EXPERIMENTAL
+
 #include "main.h"
 #include <glm/glm.hpp>
 #include <glm/gtx/rotate_vector.hpp>
@@ -48,8 +50,8 @@ bool load_content() {
                      dvec3((i * 2) - 15.0, 10 + i, 0)});
   }
 
-  phys::SetCameraPos(vec3(20.0f, 10.0f, 20.0f));
-  phys::SetCameraTarget(vec3(0, 10.0f, 0));
+  phys::SetCamera1Pos(vec3(20.0f, 10.0f, 20.0f));
+  phys::SetCamera1Target(vec3(0, 10.0f, 0));
   tp_start = chrono::high_resolution_clock::now();
   tp_end = chrono::high_resolution_clock::now();
   return true;

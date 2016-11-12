@@ -10,7 +10,6 @@ using namespace std;
 using namespace graphics_framework;
 using namespace glm;
 
-map<string, mesh> meshes;
 effect basic_eff;
 
 bool load_content() 
@@ -33,20 +32,6 @@ bool update(double delta_time) {
 }
 
 bool render() {
-/*	phys::DrawSphere(glm::vec3(4.0f, 4.0f, 0), 1.0f, RED);
-	phys::DrawSphere(glm::vec3(-4.0f, 4.0f, 0), 1.0f, RED);
-	phys::DrawSphere(glm::vec3(0, 8.0f, 0), 0.2f, YELLOW);
-	phys::DrawSphere(glm::vec3(0), 1.0f, GREEN);
-	phys::DrawSphere(glm::vec3(0, 4.0f, 4.0f), 1.0f, BLUE);
-	phys::DrawSphere(glm::vec3(0, 4.0f, -4.0f), 1.0f, BLUE);
-	phys::DrawCube(glm::vec3(0, 4.0f, 0));
-	phys::DrawLine(glm::vec3(0, 4.0f, 4.0f), glm::vec3(0, 8.0f, 0));
-	phys::DrawLine(glm::vec3(0, 4.0f, -4.0f), glm::vec3(0, 8.0f, 0));
-	phys::DrawLine(glm::vec3(4.0f, 4.0f, 0), glm::vec3(0), true, ORANGE);
-	phys::DrawLine(glm::vec3(-4.0f, 4.0f, 0), glm::vec3(0), true, PINK);
-	phys::DrawLineCross(glm::vec3(0, 8.0f, 0), 1.0f, false);
-	phys::DrawArrow(glm::vec3(0, 4.0f, 0), glm::vec3(0, 8.0f, 0), 1.0f, GREY);
-*/
 	phys::DrawScene();
 
 	const float off_the_ground = 5.0f;
@@ -114,8 +99,8 @@ bool render() {
 		vec4(1.0f, 0.0f, 0.0f, 1.0f)
 	};
 
-	GeometryNode* playfield = new GeometryNode(playfield_positions, playfield_colours);
-	RenderNode* transform_playfield = new RenderNode( vec3(0.0f, 0.0f, 0.0f),
+//	GeometryNode* playfield = new GeometryNode(playfield_positions, playfield_colours);
+/*	RenderNode* transform_playfield = new RenderNode( vec3(0.0f, 0.0f, 0.0f),
 												   vec3(1.0f, 1.0f, 1.0f),
 												   vec3(playfield_angle, 0.0f, 0.0f),
 												   basic_eff);
@@ -126,7 +111,7 @@ bool render() {
 		transform_playfield->addChild(outer_walls);
 			outer_walls->addChild(transform_outer_walls);
 	playfield->update();
-
+*/
 	return true;
 }
 
