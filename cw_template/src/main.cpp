@@ -11,28 +11,25 @@ using namespace graphics_framework;
 using namespace glm;
 
 effect basic_eff;
+GeometryNode* playfield;
 
 bool load_content() 
 {
 	phys::Init();
+
+	// 
+	// SET CAMERA
 	phys::SetCamera1Pos(vec3(0.0f, 55.0f, 0.1f));
 	phys::SetCamera1Target(vec3(0.0f, 0.0f, 0.0f));
 	phys::SetCamera2Pos(vec3(0.0f, 8.0f, 30.0f));
 
+
+	// *************
+	// BUILD SHADERS
+	// *************
 	basic_eff.add_shader("shaders/basic.vert", GL_VERTEX_SHADER);
 	basic_eff.add_shader("shaders/basic.frag", GL_FRAGMENT_SHADER);
 	basic_eff.build();
-
-	return true;
-}
-
-bool update(double delta_time) {
-	phys::Update(delta_time);
-	return true;
-}
-
-bool render() {
-	phys::DrawScene();
 
 	const float off_the_ground = 5.0f;
 
@@ -42,6 +39,10 @@ bool render() {
 	const float playfield_z = (float)playfield_length / 2.0f;
 	const float wall_height = 2.0f;
 
+
+	// *************
+	// DRAW GEOMETRY
+	// *************
 	vector<vec3> playfield_positions
 	{
 		vec3(playfield_x, off_the_ground, -playfield_z),
@@ -73,6 +74,10 @@ bool render() {
 		vec3(playfield_x, off_the_ground, playfield_z)
 	};
 
+
+	// ********************
+	// SET GEOMETRY COLOURS
+	// ********************
 	vector<vec4> playfield_colours
 	{
 		vec4(1.0f, 0.0f, 0.0f, 1.0f),
@@ -99,19 +104,37 @@ bool render() {
 		vec4(1.0f, 0.0f, 0.0f, 1.0f)
 	};
 
-//	GeometryNode* playfield = new GeometryNode(playfield_positions, playfield_colours);
-/*	RenderNode* transform_playfield = new RenderNode( vec3(0.0f, 0.0f, 0.0f),
-												   vec3(1.0f, 1.0f, 1.0f),
-												   vec3(playfield_angle, 0.0f, 0.0f),
-												   basic_eff);
+	// ******************
+	// CREATE SCENE NODES
+	// ******************
+	playfield = new GeometryNode(playfield_positions, playfield_colours);
+	RenderNode* transform_playfield = new RenderNode(vec3(0.0f, 0.0f, 0.0f),
+		vec3(1.0f, 1.0f, 1.0f),
+		vec3(playfield_angle, 0.0f, 0.0f),
+		basic_eff);
 	GeometryNode* outer_walls = new GeometryNode(outer_wall_positions, outer_wall_colours);
 	RenderNode* transform_outer_walls = new RenderNode(basic_eff);
 
+	// **********************
+	// CONSTRUCT SCENE GRAPH
+	// **********************
 	playfield->addChild(transform_playfield);
 		transform_playfield->addChild(outer_walls);
 			outer_walls->addChild(transform_outer_walls);
+
+	return true;
+}
+
+bool update(double delta_time) {
+	phys::Update(delta_time);
+	return true;
+}
+
+bool render() {
+	phys::DrawScene();
+
 	playfield->update();
-*/
+
 	return true;
 }
 
