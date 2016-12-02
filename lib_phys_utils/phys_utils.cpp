@@ -108,6 +108,28 @@ void Update(double delta_time) {
 	glfwGetCursorPos(renderer::get_window(), &cursor_x, &cursor_y);
 }
 
+void SetCamera1Pos(const glm::vec3 &p0) {
+	cam.set_position(p0);
+	PV = cam.get_projection() * cam.get_view();
+}
+
+void SetCamera1Target(const glm::vec3 &p0) {
+	cam.set_target(p0);
+	PV = cam.get_projection() * cam.get_view();
+}
+
+void SetCamera2Pos(const glm::vec3 &p0) {
+	cam2.set_position(p0);
+	cam2.set_pitch(0.0f);
+	cam2.set_yaw(0.0f);
+	PV = cam2.get_projection() * cam2.get_view();
+}
+
+glm::mat4 GetPV() { return PV; }
+glm::vec3 GetCamera1Pos() { return cam.get_position(); }
+glm::vec3 GetCamera2Pos() { return cam2.get_position(); }
+bool IsFreeCamEnabled() { return free_cam_enabled; }
+
 const glm::vec3 UP(0, 1.0f, 0);
 void DrawArrow(const glm::vec3 &p0, const glm::vec3 &p1, const double thickness, const RGBAInt32 col) {
   static geometry tube = geometry_builder::create_cylinder();
@@ -242,27 +264,6 @@ void DrawPlane(const glm::vec3 &p0, const glm::vec3 &norm, const glm::vec3 &scal
   glDisable(GL_CULL_FACE);
   renderer::render(geom);
   glEnable(GL_CULL_FACE);
-}
-
-void SetCamera1Pos(const glm::vec3 &p0) {
-	cam.set_position(p0);
-	PV = cam.get_projection() * cam.get_view();
-}
-
-void SetCamera1Target(const glm::vec3 &p0) {
-	cam.set_target(p0);
-	PV = cam.get_projection() * cam.get_view();
-}
-
-void SetCamera2Pos(const glm::vec3 &p0) {
-	cam2.set_position(p0);
-	cam2.set_pitch(0.0f);
-	cam2.set_yaw(0.0f);
-	PV = cam2.get_projection() * cam2.get_view();
-}
-
-glm::mat4 GetPV() {
-	return PV;
 }
 
 void RGBAInt32::tofloat(float *const arr) const {

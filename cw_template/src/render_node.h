@@ -18,7 +18,7 @@ public:
 		rotation = vec3(0.0f);
 		eff = e;
 	}
-	RenderNode(vec3 t, vec3 s, vec3 r, effect e)
+	RenderNode(effect e, vec3 t, vec3 s, vec3 r)
 	{
 		translation = t;		
 		scale = s;		

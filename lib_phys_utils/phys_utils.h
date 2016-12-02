@@ -39,6 +39,9 @@ void SetCamera1Pos(const glm::vec3 &p0);
 void SetCamera1Target(const glm::vec3 &p0);
 void SetCamera2Pos(const glm::vec3 &p0);
 glm::mat4 GetPV();
+glm::vec3 GetCamera1Pos();
+glm::vec3 GetCamera2Pos();
+bool IsFreeCamEnabled();
 void DrawLine(const glm::vec3 &p0, const glm::vec3 &p1, const bool depth = true, const RGBAInt32 col = RED);
 void DrawLineCross(const glm::vec3 &p0, float radius = 1.0f, const bool depth = true, const RGBAInt32 col = RED);
 

@@ -11,14 +11,16 @@ using namespace graphics_framework;
 using namespace glm;
 
 effect basic_eff;
+effect phong_eff;
 GeometryNode* playfield;
 
 bool load_content() 
 {
 	phys::Init();
 
-	// 
+	// ***********
 	// SET CAMERA
+	// ***********
 	phys::SetCamera1Pos(vec3(0.0f, 55.0f, 0.1f));
 	phys::SetCamera1Target(vec3(0.0f, 0.0f, 0.0f));
 	phys::SetCamera2Pos(vec3(0.0f, 8.0f, 30.0f));
@@ -31,18 +33,24 @@ bool load_content()
 	basic_eff.add_shader("shaders/basic.frag", GL_FRAGMENT_SHADER);
 	basic_eff.build();
 
+	phong_eff.add_shader("../../../enu_pba/res/shaders/phys_phong.vert", GL_VERTEX_SHADER);
+	phong_eff.add_shader("../../../enu_pba/res/shaders/phys_phong.vert", GL_FRAGMENT_SHADER);
+//	phong_eff.build();
+
+
+	// *************
+	// DRAW GEOMETRY
+	// *************
 	const float off_the_ground = 5.0f;
 
 	const unsigned int playfield_width = 20;
 	const unsigned int playfield_length = 42;
 	const float playfield_x = (float)playfield_width / 2.0f;
 	const float playfield_z = (float)playfield_length / 2.0f;
+	const float playfield_angle = 0.122173f;
 	const float wall_height = 2.0f;
+	const float wall_width = 1.0f;
 
-
-	// *************
-	// DRAW GEOMETRY
-	// *************
 	vector<vec3> playfield_positions
 	{
 		vec3(playfield_x, off_the_ground, -playfield_z),
@@ -53,67 +61,133 @@ bool load_content()
 		vec3(playfield_x, off_the_ground, playfield_z),
 		vec3(-playfield_x, off_the_ground, -playfield_z)
 	};
-	const float playfield_angle = 0.122173f;
 
 	vector<vec3> outer_wall_positions
 	{
+		// Top
 		vec3(-playfield_x, off_the_ground + wall_height, -playfield_z),
 		vec3(playfield_x, off_the_ground, -playfield_z),
 		vec3(-playfield_x, off_the_ground, -playfield_z),
-
 		vec3(playfield_x, off_the_ground + wall_height, -playfield_z),
 		vec3(playfield_x, off_the_ground, -playfield_z),
 		vec3(-playfield_x, off_the_ground + wall_height, -playfield_z),
 
+		// Left
+		vec3(-playfield_x, off_the_ground + wall_height, playfield_z),
+		vec3(-playfield_x, off_the_ground, -playfield_z),
 		vec3(-playfield_x, off_the_ground, playfield_z),
-		vec3(playfield_x, off_the_ground, playfield_z),
+		vec3(-playfield_x, off_the_ground + wall_height, -playfield_z),
+		vec3(-playfield_x, off_the_ground, -playfield_z),
 		vec3(-playfield_x, off_the_ground + wall_height, playfield_z),
 
+		// Right
 		vec3(playfield_x, off_the_ground + wall_height, playfield_z),
+		vec3(playfield_x, off_the_ground, playfield_z),
+		vec3(playfield_x, off_the_ground, -playfield_z),
+		vec3(playfield_x, off_the_ground + wall_height, -playfield_z),
+		vec3(playfield_x, off_the_ground + wall_height, playfield_z),
+		vec3(playfield_x, off_the_ground, -playfield_z),
+	};
+
+	vector<vec3> top_wall_positions
+	{
+		// Left
+		vec3(-playfield_x, off_the_ground + wall_height, -playfield_z),
 		vec3(-playfield_x, off_the_ground + wall_height, playfield_z),
-		vec3(playfield_x, off_the_ground, playfield_z)
+		vec3(-playfield_x + wall_width, off_the_ground + wall_height, playfield_z),
+		vec3(-playfield_x + wall_width, off_the_ground + wall_height, -playfield_z),
+		vec3(-playfield_x, off_the_ground + wall_height, -playfield_z),
+		vec3(-playfield_x + wall_width, off_the_ground + wall_height, playfield_z),
+
+		// Right
+		vec3(playfield_x, off_the_ground + wall_height, playfield_z),
+		vec3(playfield_x, off_the_ground + wall_height, -playfield_z),
+		vec3(playfield_x - wall_width, off_the_ground + wall_height, playfield_z),
+		vec3(playfield_x - wall_width, off_the_ground + wall_height, -playfield_z),
+		vec3(playfield_x - wall_width, off_the_ground + wall_height, playfield_z),
+		vec3(playfield_x, off_the_ground + wall_height, -playfield_z),
+
+		// Top
+		vec3(-playfield_x, off_the_ground + wall_height, -playfield_z),
+		vec3(-playfield_x, off_the_ground + wall_height, -playfield_z + wall_width),
+		vec3(playfield_x, off_the_ground + wall_height, -playfield_z + wall_width),
+		vec3(playfield_x, off_the_ground + wall_height, -playfield_z),
+		vec3(-playfield_x, off_the_ground + wall_height, -playfield_z),
+		vec3(playfield_x, off_the_ground + wall_height, -playfield_z + wall_width)
+	};
+
+	vector<vec3> inner_wall_positions
+	{
+		// Left
+		vec3(-playfield_x + wall_width, off_the_ground, -playfield_z + wall_width),
+		vec3(-playfield_x + wall_width, off_the_ground + wall_height, playfield_z),
+		vec3(-playfield_x + wall_width, off_the_ground, playfield_z),
+		vec3(-playfield_x + wall_width, off_the_ground + wall_height, -playfield_z + wall_width),
+		vec3(-playfield_x + wall_width, off_the_ground + wall_height, playfield_z),
+		vec3(-playfield_x + wall_width, off_the_ground, -playfield_z + wall_width),
+
+		// Right
+		vec3(playfield_x - wall_width, off_the_ground, -playfield_z + wall_width),
+		vec3(playfield_x - wall_width, off_the_ground, playfield_z),
+		vec3(playfield_x - wall_width, off_the_ground + wall_height, playfield_z),
+		vec3(playfield_x - wall_width, off_the_ground + wall_height, -playfield_z + wall_width),
+		vec3(playfield_x - wall_width, off_the_ground, -playfield_z + wall_width),
+		vec3(playfield_x - wall_width, off_the_ground + wall_height, playfield_z),
+
+		// Top
+		vec3(-playfield_x + wall_width, off_the_ground, -playfield_z + wall_width),
+		vec3(playfield_x - wall_width, off_the_ground, -playfield_z + wall_width),
+		vec3(playfield_x - wall_width, off_the_ground + wall_height, -playfield_z + wall_width),
+		vec3(-playfield_x + wall_width, off_the_ground + wall_height, -playfield_z + wall_width),
+		vec3(-playfield_x + wall_width, off_the_ground, -playfield_z + wall_width),
+		vec3(playfield_x - wall_width, off_the_ground + wall_height, -playfield_z + wall_width)
 	};
 
 
 	// ********************
 	// SET GEOMETRY COLOURS
 	// ********************
-	vector<vec4> playfield_colours
+	vector<vec4> playfield_colours;
+	for (vec3 v : playfield_positions)
 	{
-		vec4(1.0f, 0.0f, 0.0f, 1.0f),
-		vec4(1.0f, 0.0f, 0.0f, 1.0f),
-		vec4(1.0f, 0.0f, 0.0f, 1.0f),
-		vec4(1.0f, 0.0f, 0.0f, 1.0f),
-		vec4(1.0f, 0.0f, 0.0f, 1.0f),
-		vec4(1.0f, 0.0f, 0.0f, 1.0f)
-	};
+		playfield_colours.push_back(vec4(1.0f, 0.0f, 0.0f, 1.0f));
+	}
 
-	vector<vec4> outer_wall_colours
+	vector<vec4> outer_wall_colours;
+	for (vec3 v : outer_wall_positions)
 	{
-		vec4(1.0f, 0.0f, 0.0f, 1.0f),
-		vec4(1.0f, 0.0f, 0.0f, 1.0f),
-		vec4(1.0f, 0.0f, 0.0f, 1.0f),
-		vec4(1.0f, 0.0f, 0.0f, 1.0f),
-		vec4(1.0f, 0.0f, 0.0f, 1.0f),
-		vec4(1.0f, 0.0f, 0.0f, 1.0f),
-		vec4(1.0f, 0.0f, 0.0f, 1.0f),
-		vec4(1.0f, 0.0f, 0.0f, 1.0f),
-		vec4(1.0f, 0.0f, 0.0f, 1.0f),
-		vec4(1.0f, 0.0f, 0.0f, 1.0f),
-		vec4(1.0f, 0.0f, 0.0f, 1.0f),
-		vec4(1.0f, 0.0f, 0.0f, 1.0f)
-	};
+		outer_wall_colours.push_back(vec4(1.0f, 0.0f, 0.0f, 1.0f));
+	}
+
+	vector<vec4> top_wall_colours;
+	for (vec3 v : top_wall_positions)
+	{
+		top_wall_colours.push_back(vec4(1.0f, 0.0f, 0.0f, 1.0f));
+	}
+
+	vector<vec4> inner_wall_colours;
+	for (vec3 v : inner_wall_positions)
+	{
+		inner_wall_colours.push_back(vec4(0.0f, 0.0f, 0.0f, 1.0f));
+	}
+
 
 	// ******************
 	// CREATE SCENE NODES
 	// ******************
 	playfield = new GeometryNode(playfield_positions, playfield_colours);
-	RenderNode* transform_playfield = new RenderNode(vec3(0.0f, 0.0f, 0.0f),
-		vec3(1.0f, 1.0f, 1.0f),
-		vec3(playfield_angle, 0.0f, 0.0f),
-		basic_eff);
 	GeometryNode* outer_walls = new GeometryNode(outer_wall_positions, outer_wall_colours);
+	GeometryNode* top_walls = new GeometryNode(top_wall_positions, top_wall_colours);
+	GeometryNode* inner_walls = new GeometryNode(inner_wall_positions, inner_wall_colours);
+
+	RenderNode* transform_playfield = new RenderNode(basic_eff, 
+													 vec3(0.0f, 0.0f, 0.0f),
+													 vec3(1.0f, 1.0f, 1.0f),
+													 vec3(playfield_angle, 0.0f, 0.0f));
 	RenderNode* transform_outer_walls = new RenderNode(basic_eff);
+	RenderNode* transform_top_walls = new RenderNode(basic_eff);
+	RenderNode* transform_inner_walls = new RenderNode(basic_eff);
+
 
 	// **********************
 	// CONSTRUCT SCENE GRAPH
@@ -121,6 +195,10 @@ bool load_content()
 	playfield->addChild(transform_playfield);
 		transform_playfield->addChild(outer_walls);
 			outer_walls->addChild(transform_outer_walls);
+		transform_playfield->addChild(top_walls);
+			top_walls->addChild(transform_top_walls);
+		transform_playfield->addChild(inner_walls);
+			inner_walls->addChild(transform_inner_walls);
 
 	return true;
 }
@@ -132,9 +210,7 @@ bool update(double delta_time) {
 
 bool render() {
 	phys::DrawScene();
-
 	playfield->update();
-
 	return true;
 }
 
