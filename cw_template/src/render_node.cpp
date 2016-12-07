@@ -6,6 +6,7 @@ void RenderNode::update()
 {
 	object = this->parent->getNodeObject();
 	currentTransform = this->parent->getNodeTransform();
+//	tex = this->parent->getTexture();
 
 	object.get_transform().translate(translation);
 	object.get_transform().scale *= scale;
@@ -14,7 +15,7 @@ void RenderNode::update()
 	setNodeTransform(object.get_transform().get_transform_matrix() * currentTransform);
 
 /*	directional_light light;
-	light.set_ambient_intensity(vec4(0.9f, 0.9f, 0.9f, 1.0f));
+	light.set_ambient_intensity(vec4(0.5f, 0.5f, 0.5f, 1.0f));
 	light.set_direction(vec3(0.1f, 0.6f, 0.1f));
 	renderer::bind(light, "light");
 
@@ -67,6 +68,10 @@ void RenderNode::update()
 			1,
 			value_ptr(phys::GetCamera1Pos()));
 	}
+
+	// Bind texture
+	renderer::bind(tex, 0);
+	glUniform1i(eff.get_uniform_location("tex"),0);
 */
 	renderer::render(object);
 

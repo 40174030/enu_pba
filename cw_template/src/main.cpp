@@ -13,6 +13,7 @@ using namespace glm;
 effect basic_eff;
 effect phong_eff;
 GeometryNode* playfield;
+//map<string, texture> texes;
 
 bool load_content() 
 {
@@ -33,9 +34,9 @@ bool load_content()
 	basic_eff.add_shader("shaders/basic.frag", GL_FRAGMENT_SHADER);
 	basic_eff.build();
 
-	phong_eff.add_shader("../../../enu_pba/res/shaders/phys_phong.vert", GL_VERTEX_SHADER);
-	phong_eff.add_shader("../../../enu_pba/res/shaders/phys_phong.vert", GL_FRAGMENT_SHADER);
-//	phong_eff.build();
+	phong_eff.add_shader("shaders/phys_phong.vert", GL_VERTEX_SHADER);
+	phong_eff.add_shader("shaders/phys_phong.frag", GL_FRAGMENT_SHADER);
+	phong_eff.build();
 
 
 	// *************
@@ -147,6 +148,11 @@ bool load_content()
 	// ********************
 	// SET GEOMETRY COLOURS
 	// ********************
+/*	vec4 playfield_colour = vec4(1.0f, 0.0f, 0.0f, 1.0f);
+	vec4 outer_walls_colour = vec4(1.0f, 0.0f, 0.0f, 1.0f);
+	vec4 top_walls_colour = vec4(1.0f, 0.0f, 0.0f, 1.0f);
+	vec4 inner_walls_colour = vec4(0.0f, 0.0f, 0.0f, 1.0f);
+*/	
 	vector<vec4> playfield_colours;
 	for (vec3 v : playfield_positions)
 	{
@@ -156,7 +162,7 @@ bool load_content()
 	vector<vec4> outer_wall_colours;
 	for (vec3 v : outer_wall_positions)
 	{
-		outer_wall_colours.push_back(vec4(1.0f, 0.0f, 0.0f, 1.0f));
+		outer_wall_colours.push_back(vec4(0.0f, 0.0f, 0.0f, 1.0f));
 	}
 
 	vector<vec4> top_wall_colours;
@@ -171,6 +177,13 @@ bool load_content()
 		inner_wall_colours.push_back(vec4(0.0f, 0.0f, 0.0f, 1.0f));
 	}
 
+
+/*	// *************
+	// LOAD TEXTURES
+	// *************
+	texes["red"] = texture("../../../enu_pba/cw_template/red.jpg");
+	texes["black"] = texture("../../../enu_pba/cw_template/black.jpg");
+*/
 
 	// ******************
 	// CREATE SCENE NODES

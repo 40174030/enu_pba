@@ -15,6 +15,7 @@ protected:
 	SceneNode* parent;
 	mesh object;
 	mat4 nodeTransform;
+	texture tex;
 
 public:
 	SceneNode() { parent = nullptr; }
@@ -58,4 +59,5 @@ public:
 	list<SceneNode*> getNodeChildren() { return children; }
 	mesh getNodeObject() { return object; }
 	mat4 getNodeTransform() { return nodeTransform; }
+	texture getTexture() { return tex; }
 };
