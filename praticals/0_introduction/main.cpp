@@ -1,3 +1,4 @@
+#define GLM_ENABLE_EXPERIMENTAL
 #include <glm/glm.hpp>
 #include <glm/gtx/rotate_vector.hpp>
 #include <graphics_framework.h>
@@ -15,7 +16,7 @@ bool load_content() {
 bool update(float delta_time) {
   static float rot = 0.0f;
   rot += 0.2f * delta_time;
-  phys::SetCameraPos(rotate(vec3(15.0f, 12.0f, 15.0f), rot, vec3(0, 1.0f, 0)));
+  phys::SetCamera1Pos(rotate(vec3(15.0f, 12.0f, 15.0f), rot, vec3(0, 1.0f, 0)));
   phys::Update(delta_time);
   return true;
 }

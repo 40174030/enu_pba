@@ -223,7 +223,14 @@ bool update(double delta_time) {
 
 bool render() {
 	phys::DrawScene();
+
 	playfield->update();
+
+	// ************
+	// DRAW PINBALL
+	// ************
+	phys::DrawSphere(vec3(0.0f, 10.0f, -16.0f), 1.0f, GREEN);
+
 	return true;
 }
 

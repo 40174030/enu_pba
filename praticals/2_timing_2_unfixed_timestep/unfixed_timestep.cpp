@@ -39,9 +39,8 @@ bool update(double delta_time) {
     ball.position = vec3(0, fallheight, 0);
     ball.velocity = dvec3(0);
     done = false;
-    ticks = 0;
-    frames = 0;
-    t = 0.0;
+	frames = 0;
+	ticks = 0;
   }
 
   if (!done) {
@@ -51,14 +50,13 @@ bool update(double delta_time) {
       ticks++;
       double dt = glm::min(remainingTime, physics_tick);
       remainingTime -= dt;
-      t += dt;
 
-      // *********************************
-      // Apply Accleration to Velocity
-
-      // Apply Velocity to position
-
-      // *********************************
+	  // *********************************
+	  // Apply Accleration to Velocity
+	  ball.velocity += gravity * dt;
+	  // Apply Velocity to position
+	  ball.position += ball.velocity * dt;
+	  // *********************************
 
       if (ball.position.y <= 0.0f) {
         tp_end = chrono::high_resolution_clock::now();
@@ -81,8 +79,8 @@ bool load_content() {
   phys::Init();
   ball.velocity = dvec3(0);
   ball.position = dvec3(0);
-  phys::SetCameraPos(vec3(20.0f, 10.0f, 20.0f));
-  phys::SetCameraTarget(vec3(0, 10.0f, 0));
+  phys::SetCamera1Pos(vec3(20.0f, 10.0f, 20.0f));
+  phys::SetCamera1Target(vec3(0, 10.0f, 0));
   tp_start = chrono::high_resolution_clock::now();
   tp_end = chrono::high_resolution_clock::now();
   cout << "\nPress Space to reset ball" << endl;

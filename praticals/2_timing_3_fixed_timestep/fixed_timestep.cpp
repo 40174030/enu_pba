@@ -84,8 +84,8 @@ bool load_content() {
   phys::Init();
   ball.velocity = dvec3(0);
   ball.position = dvec3(0);
-  phys::SetCameraPos(vec3(20.0f, 10.0f, 20.0f));
-  phys::SetCameraTarget(vec3(0, 10.0f, 0));
+  phys::SetCamera1Pos(vec3(20.0f, 10.0f, 20.0f));
+  phys::SetCamera1Target(vec3(0, 10.0f, 0));
   tp_start = chrono::high_resolution_clock::now();
   tp_end = chrono::high_resolution_clock::now();
   cout << "\nPress Space to reset ball" << endl;
