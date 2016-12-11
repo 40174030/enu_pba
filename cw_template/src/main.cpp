@@ -13,11 +13,24 @@ using namespace glm;
 effect basic_eff;
 effect phong_eff;
 GeometryNode* playfield;
-//map<string, texture> texes;
+
+struct Ball
+{
+	dvec3 velocity;
+	dvec3 position;
+};
+Ball pinball;
+double realtime = 0.0;
+dvec3 gravity = vec3(0.0f, -9.8, 0);
+
+#define ticks_per_frame 10
+#define physics_tick 1.0f / 600.0f
+#define off_the_ground 5.0f
 
 bool load_content() 
 {
 	phys::Init();
+	pinball.position = vec3(0.0f, 10.0f, -17.0f);
 
 	// ***********
 	// SET CAMERA
@@ -42,8 +55,6 @@ bool load_content()
 	// *************
 	// DRAW GEOMETRY
 	// *************
-	const float off_the_ground = 5.0f;
-
 	const unsigned int playfield_width = 20;
 	const unsigned int playfield_length = 42;
 	const float playfield_x = (float)playfield_width / 2.0f;
@@ -148,11 +159,6 @@ bool load_content()
 	// ********************
 	// SET GEOMETRY COLOURS
 	// ********************
-/*	vec4 playfield_colour = vec4(1.0f, 0.0f, 0.0f, 1.0f);
-	vec4 outer_walls_colour = vec4(1.0f, 0.0f, 0.0f, 1.0f);
-	vec4 top_walls_colour = vec4(1.0f, 0.0f, 0.0f, 1.0f);
-	vec4 inner_walls_colour = vec4(0.0f, 0.0f, 0.0f, 1.0f);
-*/	
 	vector<vec4> playfield_colours;
 	for (vec3 v : playfield_positions)
 	{
@@ -177,13 +183,6 @@ bool load_content()
 		inner_wall_colours.push_back(vec4(0.0f, 0.0f, 0.0f, 1.0f));
 	}
 
-
-/*	// *************
-	// LOAD TEXTURES
-	// *************
-	texes["red"] = texture("../../../enu_pba/cw_template/red.jpg");
-	texes["black"] = texture("../../../enu_pba/cw_template/black.jpg");
-*/
 
 	// ******************
 	// CREATE SCENE NODES
@@ -217,6 +216,35 @@ bool load_content()
 }
 
 bool update(double delta_time) {
+	bool done = false;
+	uint16_t frames = 0;
+	uint16_t ticks = 0;
+	double accum = 0.0;
+
+	if (glfwGetKey(renderer::get_window(), GLFW_KEY_SPACE)) {
+		pinball.position = vec3(0.0f, 10.0f, -17.0f);
+		pinball.velocity = vec3(0.0f);
+		done = false;
+		accum = 0.0;
+		ticks = 0;
+		frames = 0;
+	}
+
+	if (!done)
+	{
+		frames++;
+		for (int i = 0; i < ticks_per_frame; i++)
+		{
+			ticks++;
+			pinball.velocity += gravity * (delta_time / ticks_per_frame);
+			pinball.position += pinball.velocity * (delta_time / ticks_per_frame);
+		}
+		if (pinball.position.y <= 0.0f) {
+			pinball.velocity.y = 0;
+			done = true;
+		}
+	}
+
 	phys::Update(delta_time);
 	return true;
 }
@@ -224,12 +252,15 @@ bool update(double delta_time) {
 bool render() {
 	phys::DrawScene();
 
+	// **************
+	// DRAW PLAYFIELD
+	// **************
 	playfield->update();
 
 	// ************
 	// DRAW PINBALL
 	// ************
-	phys::DrawSphere(vec3(0.0f, 10.0f, -16.0f), 1.0f, GREEN);
+	phys::DrawSphere(pinball.position, 1.0f, GREEN);
 
 	return true;
 }

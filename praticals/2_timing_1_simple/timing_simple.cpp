@@ -10,6 +10,7 @@ using namespace graphics_framework;
 using namespace glm;
 
 #define fallheight 20.0
+#define ticks_per_frame 10
 
 struct sBall {
   glm::dvec3 velocity;
@@ -21,6 +22,7 @@ static double truth_t = sqrt(abs(2.0 * gravity.y * fallheight)) / gravity.y;
 static double truth_v = truth_t * gravity.y;
 chrono::time_point<chrono::high_resolution_clock> tp_start;
 chrono::time_point<chrono::high_resolution_clock> tp_end;
+static double t = 0.0;
 
 // use this function simulate render workload
 void doWork() {
@@ -28,6 +30,7 @@ void doWork() {
 }
 
 bool update(double delta_time) {
+  t += delta_time;
   doWork();
   static bool done = false;
   static uint16_t frames = 0;
@@ -41,26 +44,31 @@ bool update(double delta_time) {
 	ticks = 0;
   }
 
-  if (!done) {
-    frames++;
-    ticks++;
-    // *********************************
-    // Apply Accleration to Velocity
-	ball.velocity += gravity * delta_time;
-    // Apply Velocity to position
-	ball.position += ball.velocity * delta_time;
-    // *********************************
+  if (!done)
+  {
+	  frames++;
+	  for (int i = 0; i < ticks_per_frame; i++)
+	  {
+		  ticks++;
+		  // *********************************
+		  // Apply Accleration to Velocity
+		  ball.velocity += gravity * (delta_time / ticks_per_frame);
+		  // Apply Velocity to position
+		  ball.position += ball.velocity * (delta_time / ticks_per_frame);
+		  // *********************************
+	  }
 
-    if (ball.position.y <= 0.0f) {
-      tp_end = chrono::high_resolution_clock::now();
-      const auto time = chrono::duration_cast<chrono::duration<double>>(tp_end - tp_start).count();
-      cout << "\nFrames:" << frames << "\tTicks:" << ticks << "\tTicks Per Second : " << ticks / time
-           << "\nFall Time: " << time << "s\tCollision Velocity" << ball.velocity.y << "m/s"
-           << "\nTime Error:" << (abs(time) - truth_t) / truth_t
-           << "%\tVelocity Error: " << (abs(ball.velocity.y) - truth_v) / truth_v << "%" << endl;
-      ball.velocity.y = 0;
-      done = true;
-    }
+	  if (ball.position.y <= 0.0f) {
+		  tp_end = chrono::high_resolution_clock::now();
+		  const auto time = chrono::duration_cast<chrono::duration<double>>(tp_end - tp_start).count();
+		  cout << "\nFrames:" << frames << "\tTicks:" << ticks << "\tTicks Per Second : " << ticks / time
+			  << "\nFall Time: " << time << "s\tCollision Velocity" << ball.velocity.y << "m/s"
+			  << "\nTime Error:" << (abs(time) - truth_t) / truth_t
+			  << "%\tVelocity Error: " << (abs(ball.velocity.y) - truth_v) / truth_v << "%"
+			  << "\nTime since simulation start: " << t << "s" << endl;
+		  ball.velocity.y = 0;
+		  done = true;
+	  }
   }
   phys::Update(delta_time);
   return true;

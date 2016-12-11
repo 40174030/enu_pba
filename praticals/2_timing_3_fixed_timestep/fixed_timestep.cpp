@@ -9,7 +9,7 @@ using namespace std;
 using namespace graphics_framework;
 using namespace glm;
 
-#define physics_tick 1.0 / 60.0
+#define physics_tick_rate (1.0 / 60.0) / 100.0
 #define fallheight 20.0
 
 struct sBall {
@@ -51,16 +51,16 @@ bool update(double delta_time) {
     frames++;
     accumulator += delta_time;
 
-    while (accumulator > physics_tick) {
+    while (accumulator > physics_tick_rate) {
       ticks++;
-      accumulator -= physics_tick;
-      t += physics_tick;
+      accumulator -= physics_tick_rate;
+      t += physics_tick_rate;
 
       // *********************************
       // Apply Accleration to Velocity
-
-      // Apply Velocity to position
-
+	  ball.velocity += gravity * physics_tick_rate;
+	  // Apply Velocity to position
+	  ball.position += ball.velocity * physics_tick_rate;
       // *********************************
 
       if (ball.position.y <= 0.0f) {

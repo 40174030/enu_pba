@@ -48,6 +48,7 @@ bool update(double delta_time) {
     double remainingTime = delta_time;
     while (remainingTime > 0.0) {
       ticks++;
+	  // dt is never greater than 1 tick
       double dt = glm::min(remainingTime, physics_tick);
       remainingTime -= dt;
 
